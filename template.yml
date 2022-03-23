@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  person service
+  SAM Template for person-service
+Globals:
+  Function:
+    Timeout: 15
+
+Resources:
+  PersonServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: person-service/
+      Handler: app.lambda_handler
+      Runtime: java11
+      Architectures:
+        - x86_64
+      Events:
+        EmailSender:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /person
+            Method: get
+
+
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  PersonApi:
+    Description: "API Gateway endpoint URL for Prod stage for Email Sender function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/person/"
+  PersonServiceFunction:
+    Description: "Person Service Lambda ARN"
+    Value: !GetAtt PersonServiceFunction.Arn
+  EmailSenderFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt PersonServiceFunction.Arn
