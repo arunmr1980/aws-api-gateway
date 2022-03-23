@@ -1,4 +1,5 @@
 
+*.bak
 */target
 # Compiled class file
 *.class

@@ -26,7 +26,7 @@ class PersonServiceTest {
 
   PersonService personService = new PersonServiceImpl();
 
-  @Test
+  // @Test
   void addPerson() {
     logger.info("Adding Person test");
 
