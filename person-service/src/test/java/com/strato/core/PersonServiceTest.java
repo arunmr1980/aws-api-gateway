@@ -26,8 +26,8 @@ class PersonServiceTest {
 
   PersonService personService = new PersonServiceImpl();
 
-  // @Test
-  void addPerson() {
+  @Test
+  void addPerson() throws Exception {
     logger.info("Adding Person test");
 
     String personId = personService.addPerson(this.getPerson());
@@ -36,7 +36,7 @@ class PersonServiceTest {
   }
 
   private JsonObject getPerson(){
-    String personJSON = "{\"name\":\"Joe\"}";
+    String personJSON = "{\"name\":\"Joe\",\"age\":12}";
     JsonReader jsonReader = Json.createReader(new StringReader(personJSON));
     JsonObject personObject = jsonReader.readObject();
     return personObject;
