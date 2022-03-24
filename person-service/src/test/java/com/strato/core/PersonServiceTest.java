@@ -30,12 +30,19 @@ class PersonServiceTest {
   void addPerson() throws Exception {
     logger.info("Adding Person test");
 
-    String personId = personService.addPerson(this.getPerson());
+    String personId = personService.addPerson(this.getPersonData());
 
     assertTrue(personId != null);
   }
 
-  private JsonObject getPerson(){
+
+  @Test
+  void getPerson() throws Exception{
+    JsonObject person = personService.getPerson(1);
+    assertEquals(person.getString("name"), "Joe");
+  }
+
+  private JsonObject getPersonData(){
     String personJSON = "{\"name\":\"Joe\",\"age\":12}";
     JsonReader jsonReader = Json.createReader(new StringReader(personJSON));
     JsonObject personObject = jsonReader.readObject();

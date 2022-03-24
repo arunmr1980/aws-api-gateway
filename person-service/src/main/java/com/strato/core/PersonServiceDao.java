@@ -6,6 +6,6 @@ public interface PersonServiceDao{
 
   public String addPerson(JsonObject person) throws Exception;
 
-  public JsonObject getPerson(String personId) throws Exception;
+  public JsonObject getPerson(int personId) throws Exception;
 
 }

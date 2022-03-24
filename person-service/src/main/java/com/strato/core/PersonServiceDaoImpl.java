@@ -2,7 +2,10 @@ package com.strato.core;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import javax.json.JsonObject;
+import javax.json.Json;
 
 import com.strato.db.DBConnector;
 
@@ -33,11 +36,20 @@ class PersonServiceDaoImpl implements PersonServiceDao{
     return "";
   }
 
-  public JsonObject getPerson(String personId) throws Exception{
-    if(true){
-      throw (new RuntimeException("Method not implemented"));
+  public JsonObject getPerson(int personId) throws Exception{
+    JsonObject person = null;
+    String query = "Select * from TestDB.Person where person_id=?";
+    PreparedStatement stmt = this.connection.prepareStatement(query);
+    stmt.setInt(1, personId);
+
+    ResultSet results = stmt.executeQuery();
+    if(results.next()){
+      person = Json.createObjectBuilder().add("person_id",results.getInt("person_id"))
+                                         .add("name", results.getString("name"))
+                                         .add("age", results.getInt("age"))
+                                         .build();
     }
-    return null;
+    return person;
   }
 
 }

@@ -16,11 +16,9 @@ public class PersonServiceImpl implements PersonService{
 
   }
 
-  public JsonObject getPerson(String personId) throws Exception{
-    if(true){
-      throw (new RuntimeException("Method not implemented"));
-    }
-    return null;
+  public JsonObject getPerson(int personId) throws Exception{
+
+    return this.personServiceDao.getPerson(personId);
   }
 
 }
