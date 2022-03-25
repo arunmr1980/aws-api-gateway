@@ -10,12 +10,18 @@ Resources:
       Handler: com.strato.Handler
       Runtime: java11
       Description: Java function
-      MemorySize: 512
-      Timeout: 10
+      MemorySize: 1024
+      Timeout: 30
       # Function's execution role
       Policies:
         - AWSLambdaBasicExecutionRole
-        - AWSLambda_ReadOnlyAccess
+        - AWSLambda_FullAccess
         - AWSXrayWriteOnlyAccess
         - AWSLambdaVPCAccessExecutionRole
       Tracing: Active
+      Events:
+        PersonService:
+          Type: Api
+          Properties:
+            Path: /person
+            Method: post

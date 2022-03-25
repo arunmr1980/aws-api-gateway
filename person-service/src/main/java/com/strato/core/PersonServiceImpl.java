@@ -2,7 +2,12 @@ package com.strato.core;
 
 import javax.json.JsonObject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class PersonServiceImpl implements PersonService{
+
+  private static final Logger logger = LogManager.getLogger(PersonServiceImpl.class);
 
   private PersonServiceDao personServiceDao;
 
@@ -11,7 +16,7 @@ public class PersonServiceImpl implements PersonService{
   }
 
   public String addPerson(JsonObject person) throws Exception{
-
+    logger.info("Adding person ");
     return this.personServiceDao.addPerson(person);
 
   }

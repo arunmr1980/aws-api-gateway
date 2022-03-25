@@ -1,6 +1,7 @@
 
 *.bak
 */target
+.aws-sam/build
 # Compiled class file
 *.class
 

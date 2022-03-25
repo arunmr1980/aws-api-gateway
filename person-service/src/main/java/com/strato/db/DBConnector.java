@@ -30,6 +30,7 @@ public class DBConnector{
     Connection connection;
 
     try {
+      logger.info ("Connecting to " + JDBC_PREFIX + dbEndpoint);
       connection = DriverManager.getConnection(JDBC_PREFIX + dbEndpoint, username, pwd);
       logger.info("Connection Established");
       return connection;
