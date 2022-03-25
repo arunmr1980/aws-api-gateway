@@ -36,6 +36,7 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
     }catch(Exception ex){
       logger.log("Exception in Handler ");
       logger.log(ex.getMessage());
+      ex.printStackTrace();
       throw(new RuntimeException(ex.getMessage()));
     }
 

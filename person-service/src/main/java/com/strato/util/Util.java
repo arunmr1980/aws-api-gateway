@@ -12,25 +12,38 @@ import javax.json.JsonReader;
 
 import java.io.StringReader;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Util {
 
+  private static final Logger logger = LogManager.getLogger(Util.class);
+
+
   public static void logEnvironment(Object event, Context context, Gson gson)
   {
-    LambdaLogger logger = context.getLogger();
+    // LambdaLogger logger = context.getLogger();
     // log execution details
-    logger.log("ENVIRONMENT VARIABLES: " + gson.toJson(System.getenv()));
-    logger.log("CONTEXT: " + gson.toJson(context));
+    logger.info("ENVIRONMENT VARIABLES: " + gson.toJson(System.getenv()));
+    logger.info("CONTEXT: " + gson.toJson(context));
     // log event details
-    logger.log("EVENT: " + gson.toJson(event));
-    logger.log("EVENT TYPE: " + event.getClass().toString());
+    logger.info("EVENT: " + gson.toJson(event));
+    logger.info("EVENT TYPE: " + event.getClass().toString());
   }
 
   public static JsonObject getBodyAsJsonObject(APIGatewayV2ProxyRequestEvent event, Gson gson){
     String eventString = gson.toJson(event);
+    logger.info("Event String - '"+ eventString + "'");
     JsonReader jsonReader = Json.createReader(new StringReader(eventString));
+    logger.info("jsonReader created ...");
     JsonObject eventObject = jsonReader.readObject();
-    JsonObject bodyObject = eventObject.getJsonObject("body");
+    logger.info("eventObject read ..." + eventObject);
+    String bodyString = eventObject.getString("body");
+    logger.info("body string ..." + bodyString);
+
+    jsonReader = Json.createReader(new StringReader(bodyString));
+    JsonObject bodyObject = jsonReader.readObject();
+    logger.info("bodyObject read ..." + bodyString);
     return bodyObject;
   }
 }
