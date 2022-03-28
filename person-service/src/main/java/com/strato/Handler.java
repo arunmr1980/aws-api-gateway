@@ -57,6 +57,8 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
       throw(new RuntimeException(ex.getMessage()));
     }
 
+    logger.log("Response :-");
+    logger.log(gson.toJson(response));
     return response;
   }
 
@@ -70,7 +72,7 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
     headers.put("Content-Type", "text/json");
     response.setHeaders(headers);
     if(jsonObj != null){
-      response.setBody(gson.toJson(jsonObj));
+      response.setBody(jsonObj.toString());
     }else{
       response.setBody("{}");
     }

@@ -39,6 +39,8 @@ class PersonServiceTest {
   @Test
   void getPerson() throws Exception{
     JsonObject person = personService.getPerson(1);
+    logger.info("Person json object");
+    logger.info(person.toString());
     assertEquals(person.getString("name"), "Joe");
   }
 
