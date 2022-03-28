@@ -20,8 +20,13 @@ Resources:
         - AWSLambdaVPCAccessExecutionRole
       Tracing: Active
       Events:
-        PersonService:
+        PersonServicePost:
           Type: Api
           Properties:
             Path: /person
-            Method: post
+            Method: POST
+        PersonServiceGet:
+          Type: Api
+          Properties:
+            Path: /person/{personId}
+            Method: GET

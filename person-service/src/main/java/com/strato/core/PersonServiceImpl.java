@@ -22,7 +22,6 @@ public class PersonServiceImpl implements PersonService{
   }
 
   public JsonObject getPerson(int personId) throws Exception{
-
     return this.personServiceDao.getPerson(personId);
   }
 
