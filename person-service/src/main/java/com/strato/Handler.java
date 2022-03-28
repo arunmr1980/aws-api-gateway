@@ -12,6 +12,8 @@ import com.google.gson.GsonBuilder;
 import java.util.Map;
 import java.util.HashMap;
 
+import javax.json.JsonObject;
+
 import com.strato.util.Util;
 
 import com.strato.core.PersonService;
@@ -30,9 +32,19 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
     // log execution details
     Util.logEnvironment(event, context, gson);
 
+    JsonObject eventObject = Util.getEventAsJsonObject(event,gson);
+    String httpMethod = eventObject.getString("httpMethod").toUpperCase();
+
     try{
       PersonService personService = new PersonServiceImpl();
-      personService.addPerson(Util.getBodyAsJsonObject(event,gson));
+      switch(httpMethod){
+        case "POST":
+          personService.addPerson(Util.getBodyAsJsonObject(event,gson));
+          break;
+        case "GET":
+          personService.getPerson(1);
+          break;
+      }
     }catch(Exception ex){
       logger.log("Exception in Handler ");
       logger.log(ex.getMessage());

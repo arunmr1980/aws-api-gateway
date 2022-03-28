@@ -32,18 +32,20 @@ public class Util {
   }
 
   public static JsonObject getBodyAsJsonObject(APIGatewayV2ProxyRequestEvent event, Gson gson){
-    String eventString = gson.toJson(event);
-    logger.info("Event String - '"+ eventString + "'");
-    JsonReader jsonReader = Json.createReader(new StringReader(eventString));
-    logger.info("jsonReader created ...");
-    JsonObject eventObject = jsonReader.readObject();
-    logger.info("eventObject read ..." + eventObject);
-    String bodyString = eventObject.getString("body");
-    logger.info("body string ..." + bodyString);
 
-    jsonReader = Json.createReader(new StringReader(bodyString));
+    JsonObject eventObject = getEventAsJsonObject(event, gson);
+    String bodyString = eventObject.getString("body");
+
+    JsonReader jsonReader = Json.createReader(new StringReader(bodyString));
     JsonObject bodyObject = jsonReader.readObject();
-    logger.info("bodyObject read ..." + bodyString);
     return bodyObject;
+  }
+
+
+  public static JsonObject getEventAsJsonObject(APIGatewayV2ProxyRequestEvent event, Gson gson){
+    String eventString = gson.toJson(event);
+    JsonReader jsonReader = Json.createReader(new StringReader(eventString));
+    JsonObject eventObject = jsonReader.readObject();
+    return eventObject;
   }
 }
