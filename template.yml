@@ -3,7 +3,19 @@ Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Lambda application that calls the Lambda API.
 Resources:
 
-  function:
+  # AuthorizerFunction:
+  #   Type: AWS::Serverless::function
+  #   Properties:
+  #     CodeUri: lambda-authorizer
+  #     Handler: com.strato.LambdaAuthorizer
+  #     Runtime: java11
+  #     Description: Java function
+  #     MemorySize: 1024
+  #     Timeout: 10
+  #     Policies:
+  #       - AWSLambdaBasicExecutionRole
+
+  PersonServiceFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: person-service/
