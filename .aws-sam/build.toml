@@ -10,4 +10,13 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["PersonServiceFunction"]
 
+[function_build_definitions.0cc0c407-1eef-45f7-9d7f-ec7a73b0c8ba]
+codeuri = "/home/arunmr/uwprojects/aws-api-gateway/lambda-authorizer"
+runtime = "java11"
+architecture = "x86_64"
+handler = "com.strato.LambdaAuthorizer"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["AuthorizerFunction"]
+
 [layer_build_definitions]

@@ -3,17 +3,17 @@ Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Lambda application that calls the Lambda API.
 Resources:
 
-  # AuthorizerFunction:
-  #   Type: AWS::Serverless::function
-  #   Properties:
-  #     CodeUri: lambda-authorizer
-  #     Handler: com.strato.LambdaAuthorizer
-  #     Runtime: java11
-  #     Description: Java function
-  #     MemorySize: 1024
-  #     Timeout: 10
-  #     Policies:
-  #       - AWSLambdaBasicExecutionRole
+  AuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda-authorizer
+      Handler: com.strato.LambdaAuthorizer
+      Runtime: java11
+      Description: Java function
+      MemorySize: 1024
+      Timeout: 10
+      Policies:
+        - AWSLambdaBasicExecutionRole
 
   PersonServiceFunction:
     Type: AWS::Serverless::Function
@@ -35,10 +35,34 @@ Resources:
         PersonServicePost:
           Type: Api
           Properties:
+            # RestApiId: !Ref PersonAPI
             Path: /person
             Method: POST
+            Auth:
+              DefaultAuthorizer: MyLambdaAuthorizer
+              Authorizers:
+                MyLambdaAuthorizer:
+                  FunctionArn: !GetAtt AuthorizerFunction.Arn
+
         PersonServiceGet:
           Type: Api
           Properties:
+            # RestApiId: !Ref PersonAPI
             Path: /person/{personId}
             Method: GET
+            Auth:
+              DefaultAuthorizer: MyLambdaAuthorizer
+              Authorizers:
+                MyLambdaAuthorizer:
+                  FunctionArn: !GetAtt AuthorizerFunction.Arn
+
+
+  # PersonAPI:
+  #   Type: AWS::Serverles::Api
+  #   Properties:
+  #     StageName: Prod
+      # Auth:
+      #   DefaultAuthorizer: MyLambdaAuthorizer
+      #   Authorizers:
+      #     MyLambdaAuthorizer:
+      #       FunctionArn: !GetAtt AuthorizerFunction.Arn
