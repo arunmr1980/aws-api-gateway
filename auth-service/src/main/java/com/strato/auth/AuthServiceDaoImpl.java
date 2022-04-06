@@ -25,15 +25,6 @@ class AuthServiceDaoImpl implements AuthServiceDao{
     this.connection = DBConnector.createConnectionViaUserPwd(USER_NAME, PASSWORD, DB_END_POINT);
   }
 
-  // id int unsigned auto_increment primary key,
-  // useraccountkey varchar(255) not null unique,
-  //  varchar(255) not null,
-  //  varchar(255) not null,
-  //  varchar(255) not null unique,
-  //  varchar(255) not null,
-  //  varchar(255),
-  //  varchar(1023) not null,
-  // authtoken varchar(1023) );
 
   public boolean registerUser(JsonObject user) throws Exception{
     String useraccountkey = StringUtil.getRandomString();
