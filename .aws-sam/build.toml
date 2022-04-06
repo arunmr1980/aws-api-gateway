@@ -19,4 +19,13 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["AuthorizerFunction"]
 
+[function_build_definitions.99874b52-4c3f-41a0-9b5f-5b51f32f829d]
+codeuri = "/home/arunmr/uwprojects/aws-api-gateway/auth-service"
+runtime = "java11"
+architecture = "x86_64"
+handler = "com.strato.Handler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["AuthServiceFunction"]
+
 [layer_build_definitions]

@@ -16,6 +16,9 @@ import javax.json.JsonObject;
 
 import com.strato.util.Util;
 
+import com.strato.auth.AuthService;
+import com.strato.auth.AuthServiceImpl;
+
 
 // Handler value: example.Handler
 public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, APIGatewayV2ProxyResponseEvent>{
@@ -36,11 +39,11 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
     String path = eventObject.getString("path").toUpperCase();
 
     try{
-      // PersonService personService = new PersonServiceImpl();
+      AuthService authService = new AuthServiceImpl();
       switch(httpMethod){
         case "POST":
-          // personService.addPerson(Util.getBodyAsJsonObject(event,gson));
-          response = this.getResponse(null);
+          boolean isSuccess = authService.registerUser(Util.getBodyAsJsonObject(event, gson));
+          response = this.getResponse(isSuccess);
           break;
         case "GET":
           // int personId = Integer.parseInt(path.substring(path.lastIndexOf("/")+1));
@@ -60,7 +63,10 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
     return response;
   }
 
-
+  private APIGatewayV2ProxyResponseEvent getResponse(boolean isSuccess){
+    String responseString = "{\"isSuccess\": "+ isSuccess+" }";
+    return this.getResponse(Util.getAsJsonObject(responseString));
+  }
 
   private APIGatewayV2ProxyResponseEvent getResponse(JsonObject jsonObj){
     APIGatewayV2ProxyResponseEvent response = new APIGatewayV2ProxyResponseEvent();

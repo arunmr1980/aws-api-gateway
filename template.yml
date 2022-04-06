@@ -3,6 +3,29 @@ Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Lambda application that calls the Lambda API.
 Resources:
 
+  AuthServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: auth-service
+      Handler: com.strato.Handler
+      Runtime: java11
+      Description: Authentication Service
+      MemorySize: 1024
+      Timeout: 10
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_FullAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+      Events:
+        RegisterUser:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: POST
+
+
   AuthorizerFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -14,6 +37,7 @@ Resources:
       Timeout: 10
       Policies:
         - AWSLambdaBasicExecutionRole
+
 
   PersonServiceFunction:
     Type: AWS::Serverless::Function

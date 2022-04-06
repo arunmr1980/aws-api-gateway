@@ -48,4 +48,12 @@ public class Util {
     JsonObject eventObject = jsonReader.readObject();
     return eventObject;
   }
+
+  public static JsonObject getAsJsonObject(String jsonString){
+    JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
+    JsonObject eventObject = jsonReader.readObject();
+    return eventObject;
+  }
+
+
 }
