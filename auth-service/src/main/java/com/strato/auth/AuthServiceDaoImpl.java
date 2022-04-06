@@ -53,7 +53,21 @@ class AuthServiceDaoImpl implements AuthServiceDao{
   }
 
   public JsonObject login(JsonObject loginRequest) throws Exception{
-    return null;
+    JsonObject user = null;
+    String username = loginRequest.getString("username");
+    String password = loginRequest.getString("password");
+
+    String query = "Select password from AuthDB.User where username=?";
+    PreparedStatement stmt = this.connection.prepareStatement(query);
+    stmt.setString(1, username);
+
+    ResultSet results = stmt.executeQuery();
+    if(results.next()){
+      user = Json.createObjectBuilder().add("password",results.getString("password"))
+                                         .build();
+    }
+
+    return user;
   }
 
 }

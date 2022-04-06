@@ -39,13 +39,23 @@ class AuthServiceTest {
   }
 
 
-  // @Test
-  // void login() throws Exception{
-  //   JsonObject loginResponse = personService.getPerson(1);
-  //   logger.info("Person json object");
-  //   logger.info(person.toString());
-  //   assertEquals(person.getString("name"), "Joe");
-  // }
+  @Test
+  void login() throws Exception{
+    JsonObject loginRequest = this.getLoginUserSuccess();
+    JsonObject loginResponse = authService.login(loginRequest);
+
+    assertEquals(loginResponse.getInt("responseCode"), AuthService.LOGIN_SUCCESS);
+  }
+
+
+  @Test
+  void loginFail() throws Exception{
+    JsonObject loginRequest = this.getLoginUserFail();
+    JsonObject loginResponse = authService.login(loginRequest);
+
+    assertEquals(loginResponse.getInt("responseCode"), AuthService.LOGIN_FAIL);
+  }
+
 
   private JsonObject getUserData(){
     StringBuilder userJson = new StringBuilder();
@@ -56,6 +66,30 @@ class AuthServiceTest {
     userJson.append("\"firstname\":\"Jason\",");
     userJson.append("\"lastname\":\"Job\",");
     userJson.append("\"password\":\"abc123\"");
+    userJson.append("}");
+    JsonReader jsonReader = Json.createReader(new StringReader(userJson.toString()));
+    JsonObject userObject = jsonReader.readObject();
+    return userObject;
+  }
+
+
+  private JsonObject getLoginUserSuccess(){
+    StringBuilder userJson = new StringBuilder();
+    userJson.append("{");
+    userJson.append("\"username\":\"testuser-nqqowxpkqy\",");
+    userJson.append("\"password\":\"abc123\"");
+    userJson.append("}");
+    JsonReader jsonReader = Json.createReader(new StringReader(userJson.toString()));
+    JsonObject userObject = jsonReader.readObject();
+    return userObject;
+  }
+
+
+  private JsonObject getLoginUserFail(){
+    StringBuilder userJson = new StringBuilder();
+    userJson.append("{");
+    userJson.append("\"username\":\"testuser-nqqowxpkqy\",");
+    userJson.append("\"password\":\"abc\"");
     userJson.append("}");
     JsonReader jsonReader = Json.createReader(new StringReader(userJson.toString()));
     JsonObject userObject = jsonReader.readObject();

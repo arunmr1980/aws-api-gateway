@@ -10,4 +10,9 @@ public class CryptoUtils{
     return encryptedPassword;
   }
 
+  public static boolean checkPasswordMatch(String inputPwd, String encryptedPwd){
+    BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+    return passwordEncryptor.checkPassword(inputPwd, encryptedPwd);
+  }
+
 }
