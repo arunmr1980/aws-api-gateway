@@ -6,6 +6,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.Json;
 
 import com.strato.util.CryptoUtils;
+import com.strato.util.JSONWebtokenUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,28 +15,25 @@ public class AuthServiceImpl implements AuthService{
 
   private static final Logger logger = LogManager.getLogger(AuthServiceImpl.class);
 
-  public boolean registerUser(JsonObject user) throws Exception{
-    AuthServiceDao authServiceDao = new AuthServiceDaoImpl();
+  private AuthServiceDao authServiceDao = new AuthServiceDaoImpl();
 
+  public boolean registerUser(JsonObject user) throws Exception{
     JsonObject updatedUser = this.getJsonObjWithEncryptedPassword(user);
-    return authServiceDao.registerUser(updatedUser);
+    return this.authServiceDao.registerUser(updatedUser);
   }
 
   public JsonObject login(JsonObject loginRequest) throws Exception{
-    // JsonObject updatedLoginRequest = this.getJsonObjWithEncryptedPassword(loginRequest);
-    AuthServiceDao authServiceDao = new AuthServiceDaoImpl();
     int responseCode = AuthService.LOGIN_FAIL;
     String responseMessage = AuthService.LOGIN_FAIL_MSG;
+    String authToken = null;
 
-    JsonObject user = authServiceDao.login(loginRequest);
+    JsonObject user = this.authServiceDao.login(loginRequest);
     if(user != null){
-      // String encryptedInputPassword = CryptoUtils.getEncodedPassword(loginRequest.getString("password"));
-      // String encryptedInputPassword = CryptoUtils.getEncodedPassword(loginRequest.getString("password"));
-      // logger.info("Encrypted Input password " + encryptedInputPassword);
       String passwordFromDB = user.getString("password");
       logger.info("Password from DB " + passwordFromDB);
       if(CryptoUtils.checkPasswordMatch(loginRequest.getString("password"), passwordFromDB)){
         logger.info("Passwords matched ...");
+        authToken = this.generateAndUpdateAuthToken(user);
         responseCode = AuthService.LOGIN_SUCCESS;
         responseMessage = AuthService.LOGIN_SUCCESS_MSG;
       }else{
@@ -44,16 +42,29 @@ public class AuthServiceImpl implements AuthService{
     }else{
       logger.info("User does not exist");
     }
-    return this.getLoginResponse(responseCode, responseMessage);
+    return this.getLoginResponse(responseCode, responseMessage, authToken);
   }
 
 
-  private JsonObject getLoginResponse(int responseCode, String message){
+  private String generateAndUpdateAuthToken(JsonObject user) throws Exception{
+    String userAccountKey = user.getString("useraccountkey");
+    String authToken = JSONWebtokenUtil.getJWTToken(userAccountKey);
+    logger.info("JSON Token :- " + authToken);
+    this.authServiceDao.updateAuthToken(userAccountKey, authToken);
+    return authToken;
+  }
+
+
+
+  private JsonObject getLoginResponse(int responseCode, String message, String authToken){
     JsonBuilderFactory factory = Json.createBuilderFactory(null);
-    JsonObject responseObj = factory.createObjectBuilder()
-                                .add("responseCode", responseCode)
-                                .add("message", message)
-                                .build();
+    JsonObjectBuilder objBuilder = factory.createObjectBuilder();
+    objBuilder.add("responseCode", responseCode)
+              .add("message", message);
+    if(authToken != null){
+      objBuilder.add("authToken", authToken);
+    }
+    JsonObject responseObj = objBuilder.build();
     return responseObj;
   }
 

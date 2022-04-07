@@ -8,4 +8,6 @@ public interface AuthServiceDao{
 
   public JsonObject login(JsonObject loginRequest) throws Exception;
 
+  public void updateAuthToken(String userAccountKey, String token) throws Exception;
+
 }

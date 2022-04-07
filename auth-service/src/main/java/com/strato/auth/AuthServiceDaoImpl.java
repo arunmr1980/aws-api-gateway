@@ -57,17 +57,27 @@ class AuthServiceDaoImpl implements AuthServiceDao{
     String username = loginRequest.getString("username");
     String password = loginRequest.getString("password");
 
-    String query = "Select password from AuthDB.User where username=?";
+    String query = "Select password, useraccountkey from AuthDB.User where username=?";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setString(1, username);
 
     ResultSet results = stmt.executeQuery();
     if(results.next()){
       user = Json.createObjectBuilder().add("password",results.getString("password"))
-                                         .build();
+                                       .add("useraccountkey", results.getString("useraccountkey"))
+                                       .build();
     }
 
     return user;
+  }
+
+
+  public void updateAuthToken(String userAccountKey, String token) throws Exception{
+    String query = "Update AuthDB.User set authtoken=? where useraccountkey=?";
+    PreparedStatement stmt = this.connection.prepareStatement(query);
+    stmt.setString(1,token);
+    stmt.setString(2,userAccountKey);
+    stmt.executeUpdate();
   }
 
 }
