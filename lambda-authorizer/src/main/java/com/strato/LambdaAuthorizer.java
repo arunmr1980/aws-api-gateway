@@ -4,12 +4,19 @@ package com.strato;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class LambdaAuthorizer implements RequestHandler<TokenAuthorizerContext, AuthPolicy> {
+
+  private static final Logger logger = LogManager.getLogger(LambdaAuthorizer.class);
 
   @Override
   public AuthPolicy handleRequest(TokenAuthorizerContext input, Context context) {
     String token = input.getAuthorizationToken();
+
+    logger.info("Token :- " + token);
 
     // validate the incoming token
     // and produce the principal user identifier associated with the token
@@ -51,7 +58,7 @@ public class LambdaAuthorizer implements RequestHandler<TokenAuthorizerContext, 
     // made with the same token
 
     // the example policy below denies access to all resources in the RestApi
-    return new AuthPolicy(principalId, AuthPolicy.PolicyDocument.getDenyAllPolicy(region, awsAccountId, restApiId, stage));
+    return new AuthPolicy(principalId, AuthPolicy.PolicyDocument.getAllowAllPolicy(region, awsAccountId, restApiId, stage));
   }
 
 }

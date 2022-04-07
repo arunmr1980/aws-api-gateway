@@ -17,10 +17,12 @@ public class AuthServiceImpl implements AuthService{
 
   private AuthServiceDao authServiceDao = new AuthServiceDaoImpl();
 
+
   public boolean registerUser(JsonObject user) throws Exception{
     JsonObject updatedUser = this.getJsonObjWithEncryptedPassword(user);
     return this.authServiceDao.registerUser(updatedUser);
   }
+
 
   public JsonObject login(JsonObject loginRequest) throws Exception{
     int responseCode = AuthService.LOGIN_FAIL;
@@ -53,7 +55,6 @@ public class AuthServiceImpl implements AuthService{
     this.authServiceDao.updateAuthToken(userAccountKey, authToken);
     return authToken;
   }
-
 
 
   private JsonObject getLoginResponse(int responseCode, String message, String authToken){

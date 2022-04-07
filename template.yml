@@ -72,7 +72,6 @@ Resources:
               Authorizers:
                 MyLambdaAuthorizer:
                   FunctionArn: !GetAtt AuthorizerFunction.Arn
-
         PersonServiceGet:
           Type: Api
           Properties:
