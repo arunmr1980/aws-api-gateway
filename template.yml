@@ -24,6 +24,11 @@ Resources:
           Properties:
             Path: /user
             Method: POST
+        Login:
+          Type: Api
+          Properties:
+            Path: /user/login
+            Method: POST
 
 
   AuthorizerFunction:

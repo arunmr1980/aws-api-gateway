@@ -31,24 +31,23 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
     LambdaLogger logger = context.getLogger();
     APIGatewayV2ProxyResponseEvent response = null;
 
-    // log execution details
     Util.logEnvironment(event, context, gson);
 
     JsonObject eventObject = Util.getEventAsJsonObject(event,gson);
     String httpMethod = eventObject.getString("httpMethod").toUpperCase();
     String path = eventObject.getString("path").toUpperCase();
+    logger.log("Path :- " + path );
 
     try{
       AuthService authService = new AuthServiceImpl();
-      switch(httpMethod){
-        case "POST":
+      switch(path){
+        case "/USER":
           boolean isSuccess = authService.registerUser(Util.getBodyAsJsonObject(event, gson));
           response = this.getResponse(isSuccess);
           break;
-        case "GET":
-          // int personId = Integer.parseInt(path.substring(path.lastIndexOf("/")+1));
-          // JsonObject person = personService.getPerson(personId);
-          // response = this.getResponse(person);
+        case "/USER/LOGIN":
+          JsonObject loginResponse = authService.login(Util.getBodyAsJsonObject(event, gson));
+          response = this.getResponse(loginResponse);
           break;
       }
     }catch(Exception ex){
