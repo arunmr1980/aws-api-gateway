@@ -1,11 +1,12 @@
 package com.strato;
 
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.strato.util.JSONWebtokenUtil;
 
 
 public class LambdaAuthorizer implements RequestHandler<TokenAuthorizerContext, AuthPolicy> {
@@ -17,6 +18,16 @@ public class LambdaAuthorizer implements RequestHandler<TokenAuthorizerContext, 
     String token = input.getAuthorizationToken();
 
     logger.info("Token :- " + token);
+    try{
+      if(! JSONWebtokenUtil.validateToken(token)){
+        logger.info("Token is not valid");
+        throw new RuntimeException("Unauthorized");
+      }
+    }catch(Exception ex){
+      logger.error(ex);
+      throw new RuntimeException(ex.getMessage());
+    }
+
 
     // validate the incoming token
     // and produce the principal user identifier associated with the token
