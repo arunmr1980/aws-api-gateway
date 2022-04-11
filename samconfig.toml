@@ -3,9 +3,9 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "rds-person-app"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1lgx1nv9yzo9n"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1bfx7z9nfp2kn"
 s3_prefix = "rds-person-app"
-region = "us-east-2"
+region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
 confirm_changeset = true

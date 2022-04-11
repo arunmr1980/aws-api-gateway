@@ -15,9 +15,9 @@ class PersonServiceDaoImpl implements PersonServiceDao{
   // private DBConnector dbConnector;
   private Connection connection;
 
-  private static final String USER_NAME = "admin";
-  private static final String PASSWORD = "milktreat";
-  private static final String DB_END_POINT = "test-db.cnyaitbtsksi.us-east-2.rds.amazonaws.com";
+  private static final String USER_NAME = System.getenv().get("DB_USER_NAME");
+  private static final String PASSWORD = System.getenv().get("DB_PASSWORD");
+  private static final String DB_END_POINT = System.getenv().get("DB_END_POINT");
 
   public PersonServiceDaoImpl(){
     this.connection = DBConnector.createConnectionViaUserPwd(USER_NAME, PASSWORD, DB_END_POINT);
