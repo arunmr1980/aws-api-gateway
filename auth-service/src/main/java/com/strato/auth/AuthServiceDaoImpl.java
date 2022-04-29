@@ -20,6 +20,7 @@ class AuthServiceDaoImpl implements AuthServiceDao{
   private static final String USER_NAME = System.getenv().get("DB_USER_NAME");
   private static final String PASSWORD = System.getenv().get("DB_PASSWORD");
   private static final String DB_END_POINT = System.getenv().get("DB_END_POINT");
+  private static final String AUTH_DB = System.getenv().get("AUTH_DB");
 
   public AuthServiceDaoImpl(){
     this.connection = DBConnector.createConnectionViaUserPwd(USER_NAME, PASSWORD, DB_END_POINT);
@@ -35,7 +36,7 @@ class AuthServiceDaoImpl implements AuthServiceDao{
     String lastname = user.getString("lastname");
     String password = user.getString("password");
 
-    String query = "Insert into AuthDB.User (useraccountkey, email, mobile, username, firstname, "+
+    String query = "Insert into "+ AUTH_DB + ".User (useraccountkey, email, mobile, username, firstname, "+
                    "lastname, password) values (?,?,?,?,?,?,?)";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setString(1,useraccountkey);
@@ -57,7 +58,7 @@ class AuthServiceDaoImpl implements AuthServiceDao{
     String username = loginRequest.getString("username");
     String password = loginRequest.getString("password");
 
-    String query = "Select password, useraccountkey from AuthDB.User where username=?";
+    String query = "Select password, useraccountkey from "+ AUTH_DB + ".User where username=?";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setString(1, username);
 
@@ -73,7 +74,7 @@ class AuthServiceDaoImpl implements AuthServiceDao{
 
 
   public void updateAuthToken(String userAccountKey, String token) throws Exception{
-    String query = "Update AuthDB.User set authtoken=? where useraccountkey=?";
+    String query = "Update "+ AUTH_DB + ".User set authtoken=? where useraccountkey=?";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setString(1,token);
     stmt.setString(2,userAccountKey);

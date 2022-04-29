@@ -76,7 +76,7 @@ class AuthServiceTest {
   private JsonObject getLoginUserSuccess(){
     StringBuilder userJson = new StringBuilder();
     userJson.append("{");
-    userJson.append("\"username\":\"testuser-nqqowxpkqy\",");
+    userJson.append("\"username\":\"testuser-vgwewrzeoq\",");
     userJson.append("\"password\":\"abc123\"");
     userJson.append("}");
     JsonReader jsonReader = Json.createReader(new StringReader(userJson.toString()));
