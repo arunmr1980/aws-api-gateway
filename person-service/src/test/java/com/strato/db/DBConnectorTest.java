@@ -16,9 +16,9 @@ class DBConnectorTest{
 
   @Test
   void createConnectionViaUserPwd(){
-    String userName = "admin";
-    String password = "milktreat";
-    String dbEndpoint = "test-db.cnyaitbtsksi.us-east-2.rds.amazonaws.com";
+    String userName = System.getenv().get("DB_USER_NAME");
+    String password = System.getenv().get("DB_PASSWORD");
+    String dbEndpoint = System.getenv().get("DB_END_POINT");
     Connection connection = DBConnector.createConnectionViaUserPwd(userName, password, dbEndpoint);
     assertNotNull(connection);
   }

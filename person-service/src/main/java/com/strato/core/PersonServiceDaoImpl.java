@@ -18,6 +18,7 @@ class PersonServiceDaoImpl implements PersonServiceDao{
   private static final String USER_NAME = System.getenv().get("DB_USER_NAME");
   private static final String PASSWORD = System.getenv().get("DB_PASSWORD");
   private static final String DB_END_POINT = System.getenv().get("DB_END_POINT");
+  private static final String PERSON_DB = System.getenv().get("PERSON_DB");
 
   public PersonServiceDaoImpl(){
     this.connection = DBConnector.createConnectionViaUserPwd(USER_NAME, PASSWORD, DB_END_POINT);
@@ -27,7 +28,7 @@ class PersonServiceDaoImpl implements PersonServiceDao{
     String name = person.getString("name");
     int age = person.getInt("age");
 
-    String query = "Insert into TestDB.Person (name, age) values (?,?)";
+    String query = "Insert into " + PERSON_DB + ".Person (name, age) values (?,?)";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setString(1,name);
     stmt.setInt(2,age);
@@ -38,7 +39,7 @@ class PersonServiceDaoImpl implements PersonServiceDao{
 
   public JsonObject getPerson(int personId) throws Exception{
     JsonObject person = null;
-    String query = "Select * from TestDB.Person where person_id=?";
+    String query = "Select * from " + PERSON_DB + ".Person where person_id=?";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setInt(1, personId);
 
