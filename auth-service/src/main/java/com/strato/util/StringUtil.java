@@ -1,6 +1,8 @@
 package com.strato.util;
 
 import java.util.Random;
+import java.time.Instant;
+import java.util.UUID;
 
 public class StringUtil{
 
@@ -16,6 +18,15 @@ public class StringUtil{
           buffer.append((char) randomLimitedInt);
       }
       return buffer.toString();
+  }
+
+  public static String getGeneratedToken(){
+    StringBuilder token = new StringBuilder();
+    long currentTimeInMilisecond = Instant.now().toEpochMilli();
+    return token.append(currentTimeInMilisecond)
+                .append("-")
+                .append(UUID.randomUUID().toString())
+                .toString();
   }
 
 }

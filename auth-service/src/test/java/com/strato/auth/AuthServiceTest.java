@@ -2,6 +2,7 @@ package com.strato.auth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -45,6 +46,8 @@ class AuthServiceTest {
     JsonObject loginResponse = authService.login(loginRequest);
 
     assertEquals(loginResponse.getInt("responseCode"), AuthService.LOGIN_SUCCESS);
+    assertNotNull(loginResponse.getString("accessToken"));
+    assertNotNull(loginResponse.getString("refreshToken"));
   }
 
 

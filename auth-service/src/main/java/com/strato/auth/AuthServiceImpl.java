@@ -5,8 +5,12 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonObjectBuilder;
 import javax.json.Json;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import com.strato.util.CryptoUtils;
 import com.strato.util.JSONWebtokenUtil;
+import com.strato.util.StringUtil;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +31,8 @@ public class AuthServiceImpl implements AuthService{
   public JsonObject login(JsonObject loginRequest) throws Exception{
     int responseCode = AuthService.LOGIN_FAIL;
     String responseMessage = AuthService.LOGIN_FAIL_MSG;
-    String authToken = null;
+    String accessToken = null;
+    String refreshToken = null;
 
     JsonObject user = this.authServiceDao.login(loginRequest);
     if(user != null){
@@ -35,7 +40,9 @@ public class AuthServiceImpl implements AuthService{
       logger.info("Password from DB " + passwordFromDB);
       if(CryptoUtils.checkPasswordMatch(loginRequest.getString("password"), passwordFromDB)){
         logger.info("Passwords matched ...");
-        authToken = this.generateAndUpdateAuthToken(user);
+        Map<String, String> tokensMap = this.generateAndUpdateTokens(user);
+        accessToken = tokensMap.get("accessToken") + "";
+        refreshToken = tokensMap.get("refreshToken") + "";
         responseCode = AuthService.LOGIN_SUCCESS;
         responseMessage = AuthService.LOGIN_SUCCESS_MSG;
       }else{
@@ -44,26 +51,35 @@ public class AuthServiceImpl implements AuthService{
     }else{
       logger.info("User does not exist");
     }
-    return this.getLoginResponse(responseCode, responseMessage, authToken);
+    return this.getLoginResponse(responseCode, responseMessage, accessToken, refreshToken);
   }
 
 
-  private String generateAndUpdateAuthToken(JsonObject user) throws Exception{
+  private Map<String, String> generateAndUpdateTokens(JsonObject user) throws Exception{
+    Map<String, String> tokensMap = new HashMap<String, String>();
     String userAccountKey = user.getString("useraccountkey");
-    String authToken = JSONWebtokenUtil.getJWTToken(userAccountKey);
-    logger.info("JSON Token :- " + authToken);
-    this.authServiceDao.updateAuthToken(userAccountKey, authToken);
-    return authToken;
+    String accessToken = JSONWebtokenUtil.getJWTToken(userAccountKey);
+    logger.info("JSON Token :- " + accessToken);
+    String refreshToken = StringUtil.getGeneratedToken();
+    logger.info("Refresh Token :- " + refreshToken);
+    this.authServiceDao.updateAuthToken(userAccountKey, accessToken);
+
+    tokensMap.put("accessToken", accessToken);
+    tokensMap.put("refreshToken", refreshToken);
+    return tokensMap;
   }
 
 
-  private JsonObject getLoginResponse(int responseCode, String message, String authToken){
+  private JsonObject getLoginResponse(int responseCode, String message, String accessToken, String refreshToken){
     JsonBuilderFactory factory = Json.createBuilderFactory(null);
     JsonObjectBuilder objBuilder = factory.createObjectBuilder();
     objBuilder.add("responseCode", responseCode)
               .add("message", message);
-    if(authToken != null){
-      objBuilder.add("authToken", authToken);
+    if(accessToken != null){
+      objBuilder.add("accessToken", accessToken);
+    }
+    if(refreshToken != null){
+      objBuilder.add("refreshToken", refreshToken);
     }
     JsonObject responseObj = objBuilder.build();
     return responseObj;

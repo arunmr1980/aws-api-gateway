@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 class JSONWebtokenUtilTest{
 
-  private static final Logger logger = LoggerFactory.getLogger(CryptoUtilsTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(JSONWebtokenUtilTest.class);
 
   @Test
   void getJWTToken() throws Exception {
