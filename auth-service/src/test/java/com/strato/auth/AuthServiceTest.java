@@ -45,9 +45,9 @@ class AuthServiceTest {
     JsonObject loginRequest = this.getLoginUserSuccess();
     JsonObject loginResponse = authService.login(loginRequest);
 
-    assertEquals(loginResponse.getInt("responseCode"), AuthService.LOGIN_SUCCESS);
-    assertNotNull(loginResponse.getString("accessToken"));
-    assertNotNull(loginResponse.getString("refreshToken"));
+    assertEquals(loginResponse.getInt("response_code"), AuthService.LOGIN_SUCCESS);
+    assertNotNull(loginResponse.getString("access_token"));
+    assertNotNull(loginResponse.getString("refresh_token"));
   }
 
 
@@ -56,7 +56,7 @@ class AuthServiceTest {
     JsonObject loginRequest = this.getLoginUserFail();
     JsonObject loginResponse = authService.login(loginRequest);
 
-    assertEquals(loginResponse.getInt("responseCode"), AuthService.LOGIN_FAIL);
+    assertEquals(loginResponse.getInt("response_code"), AuthService.LOGIN_FAIL);
   }
 
 
@@ -79,7 +79,7 @@ class AuthServiceTest {
   private JsonObject getLoginUserSuccess(){
     StringBuilder userJson = new StringBuilder();
     userJson.append("{");
-    userJson.append("\"username\":\"testuser-vgwewrzeoq\",");
+    userJson.append("\"username\":\"testuser-moxtmitzbu\",");
     userJson.append("\"password\":\"abc123\"");
     userJson.append("}");
     JsonReader jsonReader = Json.createReader(new StringReader(userJson.toString()));
