@@ -48,6 +48,23 @@ class AuthServiceTest {
     assertEquals(loginResponse.getInt("response_code"), AuthService.LOGIN_SUCCESS);
     assertNotNull(loginResponse.getString("access_token"));
     assertNotNull(loginResponse.getString("refresh_token"));
+    assertNotNull(loginResponse.getString("device_key"));
+
+  }
+
+
+  @Test
+  void loginWithDevice() throws Exception{
+    JsonObject loginRequest = this.getLoginUserSuccessWithDeviceKey();
+    String inputDeviceKey = loginRequest.getString("device_key");
+    JsonObject loginResponse = authService.login(loginRequest);
+
+    assertEquals(loginResponse.getInt("response_code"), AuthService.LOGIN_SUCCESS);
+    assertNotNull(loginResponse.getString("access_token"));
+    assertNotNull(loginResponse.getString("refresh_token"));
+    assertNotNull(loginResponse.getString("device_key"));
+    assertEquals(inputDeviceKey, loginResponse.getString("device_key"));
+
   }
 
 
@@ -81,6 +98,19 @@ class AuthServiceTest {
     userJson.append("{");
     userJson.append("\"username\":\"testuser-moxtmitzbu\",");
     userJson.append("\"password\":\"abc123\"");
+    userJson.append("}");
+    JsonReader jsonReader = Json.createReader(new StringReader(userJson.toString()));
+    JsonObject userObject = jsonReader.readObject();
+    return userObject;
+  }
+
+
+  private JsonObject getLoginUserSuccessWithDeviceKey(){
+    StringBuilder userJson = new StringBuilder();
+    userJson.append("{");
+    userJson.append("\"username\":\"testuser-moxtmitzbu\",");
+    userJson.append("\"password\":\"abc123\",");
+    userJson.append("\"device_key\":\"kxmopjbqqncwfgtn\"");
     userJson.append("}");
     JsonReader jsonReader = Json.createReader(new StringReader(userJson.toString()));
     JsonObject userObject = jsonReader.readObject();

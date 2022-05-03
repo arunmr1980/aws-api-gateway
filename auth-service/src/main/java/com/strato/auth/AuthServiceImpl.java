@@ -38,6 +38,7 @@ public class AuthServiceImpl implements AuthService{
     String responseMessage = AuthService.LOGIN_FAIL_MSG;
     String accessToken = null;
     String refreshToken = null;
+    String deviceKey = null;
 
     JsonObject user = this.authServiceDao.login(loginRequest);
     if(user != null){
@@ -46,8 +47,9 @@ public class AuthServiceImpl implements AuthService{
       if(CryptoUtils.checkPasswordMatch(loginRequest.getString("password"), passwordFromDB)){
         logger.info("Passwords matched ...");
         Map<String, String> tokensMap = this.generateAndUpdateTokens(user, loginRequest);
-        accessToken = tokensMap.get("accessToken") + "";
-        refreshToken = tokensMap.get("refreshToken") + "";
+        accessToken = tokensMap.get("access_token") + "";
+        refreshToken = tokensMap.get("refresh_token") + "";
+        deviceKey = tokensMap.get("device_key") + "";
         responseCode = AuthService.LOGIN_SUCCESS;
         responseMessage = AuthService.LOGIN_SUCCESS_MSG;
       }else{
@@ -56,7 +58,7 @@ public class AuthServiceImpl implements AuthService{
     }else{
       logger.info("User does not exist");
     }
-    return this.getLoginResponse(responseCode, responseMessage, accessToken, refreshToken);
+    return this.getLoginResponse(responseCode, responseMessage, accessToken, refreshToken, deviceKey);
   }
 
 
@@ -67,15 +69,17 @@ public class AuthServiceImpl implements AuthService{
     logger.info("JSON Token :- " + accessToken);
     String refreshToken = StringUtil.getGeneratedToken();
     logger.info("Refresh Token :- " + refreshToken);
-    this.updateTokens(accessToken, refreshToken, userAccountKey, loginRequest);
+    String deviceKey = this.updateDeviceAndTokens(accessToken, refreshToken, userAccountKey, loginRequest);
 
-    tokensMap.put("accessToken", accessToken);
-    tokensMap.put("refreshToken", refreshToken);
+    tokensMap.put("access_token", accessToken);
+    tokensMap.put("refresh_token", refreshToken);
+    tokensMap.put("device_key", deviceKey);
+
     return tokensMap;
   }
 
 
-  private void updateTokens(String accessToken, String refreshToken, String userAccountKey, JsonObject loginRequest) throws Exception{
+  private String updateDeviceAndTokens(String accessToken, String refreshToken, String userAccountKey, JsonObject loginRequest) throws Exception{
     long accessTokenExpiryDateTime = DateUtil.getNowInMilliSeconds() + ACCESS_TOKEN_EXPIRY_MS;
     long refreshTokenExpiryDateTime = DateUtil.getNowInMilliSeconds() + REFRESH_TOKEN_EXPIRY_MS;
 
@@ -104,10 +108,11 @@ public class AuthServiceImpl implements AuthService{
                                           deviceKey,
                                           deviceName
                                           );
+    return deviceKey;
   }
 
 
-  private JsonObject getLoginResponse(int responseCode, String message, String accessToken, String refreshToken){
+  private JsonObject getLoginResponse(int responseCode, String message, String accessToken, String refreshToken, String deviceKey){
     JsonBuilderFactory factory = Json.createBuilderFactory(null);
     JsonObjectBuilder objBuilder = factory.createObjectBuilder();
     objBuilder.add("response_code", responseCode)
@@ -117,6 +122,9 @@ public class AuthServiceImpl implements AuthService{
     }
     if(refreshToken != null){
       objBuilder.add("refresh_token", refreshToken);
+    }
+    if(deviceKey != null){
+      objBuilder.add("device_key", deviceKey);
     }
     JsonObject responseObj = objBuilder.build();
     return responseObj;
