@@ -16,4 +16,6 @@ public interface AuthServiceDao{
                                String deviceKey,
                                String deviceName) throws Exception;
 
+  public JsonObject getUserDevice(String accessToken, String refreshToken) throws Exception;
+
 }

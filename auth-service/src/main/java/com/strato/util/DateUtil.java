@@ -8,4 +8,12 @@ public class DateUtil{
     Clock clock = Clock.systemDefaultZone();
     return clock.millis();
   }
+
+  public static boolean isExpired(long expiryTimeInMs){
+    if(getNowInMilliSeconds() > expiryTimeInMs){
+      return true;
+    }else{
+      return false;
+    }
+  }
 }

@@ -23,7 +23,37 @@ public class AuthServiceImpl implements AuthService{
   private AuthServiceDao authServiceDao = new AuthServiceDaoImpl();
 
   public JsonObject refreshToken(JsonObject refreshRequest) throws Exception{
-    return null;
+    JsonObject response = null;
+    String refreshToken = refreshRequest.getString("refresh_token");
+    String accessToken = refreshRequest.getString("access_token");
+    JsonObject userDevice = this.authServiceDao.getUserDevice(accessToken, refreshToken);
+    if(userDevice != null){
+      logger.info("Device record found for refresh token");
+      long expiryDateTime = userDevice.getJsonNumber("refresh_token_expiry_datetime").longValue();
+      if (!DateUtil.isExpired(expiryDateTime)){
+        logger.info("Refreshing tokens ...");
+        Map<String, String> tokensMap = this.generateAndUpdateTokens(userDevice, userDevice);
+        String accessTokenNew = tokensMap.get("access_token") + "";
+        String refreshTokenNew = tokensMap.get("refresh_token") + "";
+        response = this.getResponse(AuthService.REFRESH_TOKEN_SUCCESS,
+                                    AuthService.REFRESH_TOKEN_SUCCESS_MSG,
+                                    accessTokenNew,
+                                    refreshTokenNew,
+                                    null //deviceKey
+                                    );
+      }else{
+        logger.info("Refresh token has expired");
+        response = this.getResponse(AuthService.REFRESH_TOKEN_FAIL,
+                                    AuthService.REFRESH_TOKEN_FAIL_MSG,
+                                    null,  // access token
+                                    null, // refresh token
+                                    null //deviceKey
+                                    );
+      }
+    }else{
+      logger.info("No user device record exist for the tokens");
+    }
+    return response;
   }
 
 
@@ -34,7 +64,7 @@ public class AuthServiceImpl implements AuthService{
 
 
   public JsonObject login(JsonObject loginRequest) throws Exception{
-    int responseCode = AuthService.LOGIN_FAIL;
+    String responseCode = AuthService.LOGIN_FAIL;
     String responseMessage = AuthService.LOGIN_FAIL_MSG;
     String accessToken = null;
     String refreshToken = null;
@@ -58,7 +88,7 @@ public class AuthServiceImpl implements AuthService{
     }else{
       logger.info("User does not exist");
     }
-    return this.getLoginResponse(responseCode, responseMessage, accessToken, refreshToken, deviceKey);
+    return this.getResponse(responseCode, responseMessage, accessToken, refreshToken, deviceKey);
   }
 
 
@@ -112,7 +142,7 @@ public class AuthServiceImpl implements AuthService{
   }
 
 
-  private JsonObject getLoginResponse(int responseCode, String message, String accessToken, String refreshToken, String deviceKey){
+  private JsonObject getResponse(String responseCode, String message, String accessToken, String refreshToken, String deviceKey){
     JsonBuilderFactory factory = Json.createBuilderFactory(null);
     JsonObjectBuilder objBuilder = factory.createObjectBuilder();
     objBuilder.add("response_code", responseCode)
