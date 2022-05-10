@@ -43,8 +43,8 @@ public class AuthServiceImpl implements AuthService{
                                     );
       }else{
         logger.info("Refresh token has expired");
-        response = this.getResponse(AuthService.REFRESH_TOKEN_FAIL,
-                                    AuthService.REFRESH_TOKEN_FAIL_MSG,
+        response = this.getResponse(AuthService.REFRESH_TOKEN_EXPIRED,
+                                    AuthService.REFRESH_TOKEN_EXPIRED_MSG,
                                     null,  // access token
                                     null, // refresh token
                                     null //deviceKey
@@ -52,6 +52,12 @@ public class AuthServiceImpl implements AuthService{
       }
     }else{
       logger.info("No user device record exist for the tokens");
+      response = this.getResponse(AuthService.REFRESH_TOKEN_FAIL,
+                                  AuthService.REFRESH_TOKEN_FAIL_MSG,
+                                  null,  // access token
+                                  null, // refresh token
+                                  null //deviceKey
+                                  );
     }
     return response;
   }

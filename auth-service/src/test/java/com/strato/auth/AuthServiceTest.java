@@ -45,7 +45,6 @@ class AuthServiceTest {
     JsonObject loginResponse = authService.login(loginUser);
     String accessToken = loginResponse.getString("access_token");
     String refreshToken = loginResponse.getString("refresh_token");
-    logger.info("Access Token login<1>     - " + accessToken);
     assertEquals(loginResponse.getString("response_code"), AuthService.LOGIN_SUCCESS);
     assertNotNull(accessToken);
     assertNotNull(refreshToken);
@@ -62,10 +61,22 @@ class AuthServiceTest {
     assertEquals(refreshResponse.getString("response_code"), AuthService.REFRESH_TOKEN_SUCCESS);
     assertNotNull(accessTokenNew);
     assertNotNull(refreshTokenNew);
-    logger.info("Access Token login<2>     - " + accessToken);
+    logger.info("Access Token login     - " + accessToken);
     logger.info("Access Token refreshed - " + accessTokenNew);
     assertNotEquals(accessToken, accessTokenNew);
     assertNotEquals(refreshToken, refreshTokenNew);
+
+  }
+
+
+  @Test
+  void refreshTokenFailure() throws Exception{
+    String accessToken = "randontoken****";
+    String refreshToken = "randomrefresh";
+    JsonObject refreshRequest =  this.getRefreshTokenRequest(accessToken, refreshToken);
+    JsonObject refreshResponse = authService.refreshToken(refreshRequest);
+    assertNotNull(refreshResponse);
+    assertEquals(refreshResponse.getString("response_code"), AuthService.REFRESH_TOKEN_FAIL);
 
   }
 
@@ -79,7 +90,7 @@ class AuthServiceTest {
   }
 
 
-  // @Test
+  @Test
   void login() throws Exception{
     JsonObject loginRequest = this.getLoginUserSuccess();
     JsonObject loginResponse = authService.login(loginRequest);
@@ -92,7 +103,7 @@ class AuthServiceTest {
   }
 
 
-  // @Test
+  @Test
   void loginWithDevice() throws Exception{
     JsonObject loginRequest = this.getLoginUserSuccessWithDeviceKey();
     String inputDeviceKey = loginRequest.getString("device_key");
@@ -107,7 +118,7 @@ class AuthServiceTest {
   }
 
 
-  // @Test
+  @Test
   void loginFail() throws Exception{
     JsonObject loginRequest = this.getLoginUserFail();
     JsonObject loginResponse = authService.login(loginRequest);
