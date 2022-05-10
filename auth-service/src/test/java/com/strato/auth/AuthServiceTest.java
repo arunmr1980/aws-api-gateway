@@ -76,9 +76,22 @@ class AuthServiceTest {
     JsonObject refreshRequest =  this.getRefreshTokenRequest(accessToken, refreshToken);
     JsonObject refreshResponse = authService.refreshToken(refreshRequest);
     assertNotNull(refreshResponse);
-    assertEquals(refreshResponse.getString("response_code"), AuthService.REFRESH_TOKEN_FAIL);
-
+    assertEquals(AuthService.REFRESH_TOKEN_FAIL, refreshResponse.getString("response_code"));
+    assertEquals(AuthService.REFRESH_TOKEN_FAIL_MSG, refreshResponse.getString("message"));
   }
+
+
+  @Test
+  void refreshTokenExpired() throws Exception{
+    String accessToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ6Y2p4bW9tZ2lsIiwiaWF0IjoxNjUyMTY0OTk1LCJleHAiOjE2NTIyNTE0MDV9.ybab5MpnDAQkhXlP36uWjhZYnfjI_oDjsKwIwWWwb4d8-XyBEUM7966Bc8kftF6vVLHpslvGdppFJS4Pz8Tr4g";
+    String refreshToken = "1652164995755-73838d3d-e788-4b99-815f-c0e31b03a77c";
+    JsonObject refreshRequest =  this.getRefreshTokenRequest(accessToken, refreshToken);
+    JsonObject refreshResponse = authService.refreshToken(refreshRequest);
+    assertNotNull(refreshResponse);
+    assertEquals(AuthService.REFRESH_TOKEN_EXPIRED, refreshResponse.getString("response_code"));
+    assertEquals(AuthService.REFRESH_TOKEN_EXPIRED_MSG, refreshResponse.getString("message"));
+  }
+
 
   @Test
   void registerUser() throws Exception {

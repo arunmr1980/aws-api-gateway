@@ -20,8 +20,8 @@ public interface AuthService{
   public static final String REFRESH_TOKEN_EXPIRED="refresh_token_expired";
   public static final String REFRESH_TOKEN_EXPIRED_MSG="Token refresh expired";
 
-  public static final long ACCESS_TOKEN_EXPIRY_MS = Long.parseLong(System.getenv().getOrDefault("ACCESS_TOKEN_EXPIRY_MS","3600000"));
-  public static final long REFRESH_TOKEN_EXPIRY_MS = Long.parseLong(System.getenv().getOrDefault("REFRESH_TOKEN_EXPIRY_MS","31536000000"));
+  public static final long ACCESS_TOKEN_EXPIRY_MS = Long.parseLong(System.getenv().getOrDefault("ACCESS_TOKEN_EXPIRY_MS","3600000"));// 60 min
+  public static final long REFRESH_TOKEN_EXPIRY_MS = Long.parseLong(System.getenv().getOrDefault("REFRESH_TOKEN_EXPIRY_MS","31536000000"));// 1 year
 
 
   public boolean registerUser(JsonObject person) throws Exception;
