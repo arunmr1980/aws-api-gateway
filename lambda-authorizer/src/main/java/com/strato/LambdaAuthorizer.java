@@ -18,14 +18,20 @@ public class LambdaAuthorizer implements RequestHandler<TokenAuthorizerContext, 
     String token = input.getAuthorizationToken();
 
     logger.info("Token :- " + token);
+    if (token == null || !token.startsWith("Bearer ")) {
+      throw new RuntimeException("No JWT token found in request headers");
+    }
+    token = token.substring(7);
+    
     try{
       if(! JSONWebtokenUtil.validateToken(token)){
         logger.info("Token is not valid");
         throw new RuntimeException("Unauthorized");
       }
     }catch(Exception ex){
+      logger.info("Exception while validating token");
       logger.error(ex);
-      throw new RuntimeException(ex.getMessage());
+      throw new RuntimeException("Unauthorized");
     }
 
 
