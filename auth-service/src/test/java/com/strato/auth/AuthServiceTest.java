@@ -120,8 +120,34 @@ class AuthServiceTest {
     assertNotNull(loginResponse.getString("refresh_token"));
     assertNotNull(loginResponse.getString("device_key"));
     assertEquals(loginResponse.getJsonNumber("expires").longValue(), AuthService.ACCESS_TOKEN_EXPIRY_MS);
+  }
 
 
+  @Test
+  void logout() throws Exception{
+    JsonObject loginRequest = this.getLoginUserSuccess();
+    JsonObject loginResponse = authService.login(loginRequest);
+
+    String accessToken = loginResponse.getString("access_token");
+    String refreshToken = loginResponse.getString("refresh_token");
+
+    assertEquals(loginResponse.getString("response_code"), AuthService.LOGIN_SUCCESS);
+    assertNotNull(accessToken);
+    assertNotNull(refreshToken);
+    assertNotNull(loginResponse.getString("device_key"));
+    assertEquals(loginResponse.getJsonNumber("expires").longValue(), AuthService.ACCESS_TOKEN_EXPIRY_MS);
+
+    JsonObject logoutRequest = this.getLogoutRequest(accessToken);
+    JsonObject logoutResponse = authService.logout(logoutRequest);
+    assertEquals(logoutResponse.getString("response_code"), AuthService.LOGOUT_SUCCESS);
+    assertEquals(logoutResponse.getString("message"), AuthService.LOGOUT_SUCCESS_MSG);
+
+    // Verify that refreshing access token will fail after logout
+    JsonObject refreshRequest =  this.getRefreshTokenRequest(accessToken, refreshToken);
+    JsonObject refreshResponse = authService.refreshToken(refreshRequest);
+    assertNotNull(refreshResponse);
+    assertEquals(AuthService.REFRESH_TOKEN_FAIL, refreshResponse.getString("response_code"));
+    assertEquals(AuthService.REFRESH_TOKEN_FAIL_MSG, refreshResponse.getString("message"));
   }
 
 
@@ -167,6 +193,18 @@ class AuthServiceTest {
   private JsonObject getLoginUser(String userName, String password){
     return this.getLoginUser(userName, password, null);
   }
+
+
+  private JsonObject getLogoutRequest(String accessToken){
+    StringBuilder json = new StringBuilder();
+    json.append("{");
+    json.append("\"access_token\":\"" + accessToken + "\"");
+    json.append("}");
+    JsonReader jsonReader = Json.createReader(new StringReader(json.toString()));
+    JsonObject logoutObject = jsonReader.readObject();
+    return logoutObject;
+  }
+
 
   private JsonObject getLoginUser(String userName, String password, String deviceKey){
     StringBuilder userJson = new StringBuilder();

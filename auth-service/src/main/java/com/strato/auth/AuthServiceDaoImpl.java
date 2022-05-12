@@ -36,18 +36,34 @@ class AuthServiceDaoImpl implements AuthServiceDao{
 
 
   public JsonObject getUserDevice(String accessToken, String refreshToken) throws Exception{
-    JsonObject device = null;
     String query = "Select user_account_key, device_key, refresh_token_expiry_datetime from "+ AUTH_DB + "." + TBL_USER_DEVICE + " Where "+
                    "access_token=? And refresh_token=?";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setString(1,accessToken);
     stmt.setString(2,refreshToken);
     ResultSet results = stmt.executeQuery();
+    return this.getUserDevice(results);
+  }
+
+
+  public JsonObject getUserDevice(String accessToken) throws Exception{
+    String query = "Select user_account_key, device_key, refresh_token_expiry_datetime from "+ AUTH_DB + "." + TBL_USER_DEVICE + " Where "+
+                   "access_token=?";
+    PreparedStatement stmt = this.connection.prepareStatement(query);
+    stmt.setString(1,accessToken);
+    ResultSet results = stmt.executeQuery();
+    return this.getUserDevice(results);
+  }
+
+
+  private JsonObject getUserDevice(ResultSet results) throws Exception{
+    JsonObject device = null;
     if(results.next()){
-      device = Json.createObjectBuilder().add("user_account_key",results.getString("user_account_key"))
-                                       .add("device_key",results.getString("device_key"))
-                                       .add("refresh_token_expiry_datetime", results.getLong("refresh_token_expiry_datetime"))
-                                       .build();
+      device = Json.createObjectBuilder()
+                   .add("user_account_key",results.getString("user_account_key"))
+                   .add("device_key",results.getString("device_key"))
+                   .add("refresh_token_expiry_datetime", results.getLong("refresh_token_expiry_datetime"))
+                   .build();
     }
     return device;
   }

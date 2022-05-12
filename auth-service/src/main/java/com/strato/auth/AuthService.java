@@ -11,6 +11,9 @@ public interface AuthService{
   public static final String LOGIN_SUCCESS="login_success";
   public static final String LOGIN_SUCCESS_MSG="Login success";
 
+  public static final String LOGOUT_SUCCESS="logout_success";
+  public static final String LOGOUT_SUCCESS_MSG="Logout completed";
+
   public static final String REFRESH_TOKEN_SUCCESS="refresh_token_success";
   public static final String REFRESH_TOKEN_SUCCESS_MSG="Token refresh success";
 
@@ -27,6 +30,8 @@ public interface AuthService{
   public boolean registerUser(JsonObject person) throws Exception;
 
   public JsonObject login(JsonObject loginRequest) throws Exception;
+
+  public JsonObject logout(JsonObject logoutRequest) throws Exception;
 
   public JsonObject refreshToken(JsonObject refreshRequest) throws Exception;
 

@@ -18,4 +18,6 @@ public interface AuthServiceDao{
 
   public JsonObject getUserDevice(String accessToken, String refreshToken) throws Exception;
 
+  public JsonObject getUserDevice(String accessToken) throws Exception;
+
 }

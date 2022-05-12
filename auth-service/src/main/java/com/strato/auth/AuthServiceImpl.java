@@ -98,6 +98,26 @@ public class AuthServiceImpl implements AuthService{
   }
 
 
+  public JsonObject logout(JsonObject logoutRequest) throws Exception{
+    JsonObject response = null;
+    String accessToken = logoutRequest.getString("access_token");
+    JsonObject userDevice = this.authServiceDao.getUserDevice(accessToken);
+    if(userDevice != null){
+      logger.info("User device record of logout device found");
+      // Update the tokens effectively overwriting them. New tokens are never returned to user
+      this.generateAndUpdateTokensForTokenRefresh(userDevice);
+    }else{
+      logger.info("No device found for logout");
+    }
+    return this.getResponse(AuthService.LOGOUT_SUCCESS,
+                            AuthService.LOGOUT_SUCCESS_MSG,
+                            null,  // access token
+                            null, // refresh token
+                            null //deviceKey
+                            );
+  }
+
+
   private Map<String, String> generateAndUpdateTokensForTokenRefresh(JsonObject userDevice) throws Exception{
     String userAccountKey = userDevice.getString("user_account_key");
     String deviceKey = userDevice.getString("device_key");
