@@ -45,9 +45,13 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
           boolean isSuccess = authService.registerUser(Util.getBodyAsJsonObject(event, gson));
           response = this.getResponse(isSuccess);
           break;
-        case "/USER/LOGIN":
+        case "/AUTH/LOGIN":
           JsonObject loginResponse = authService.login(Util.getBodyAsJsonObject(event, gson));
           response = this.getResponse(loginResponse);
+          break;
+        case "/AUTH/TOKEN":
+          JsonObject refreshTokenResponse = authService.refreshToken(Util.getBodyAsJsonObject(event, gson));
+          response = this.getResponse(refreshTokenResponse);
           break;
       }
     }catch(Exception ex){

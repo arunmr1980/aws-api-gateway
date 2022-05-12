@@ -66,6 +66,12 @@ class AuthServiceTest {
     assertNotEquals(accessToken, accessTokenNew);
     assertNotEquals(refreshToken, refreshTokenNew);
 
+    //## Trying to refresh old token
+    refreshResponse = authService.refreshToken(refreshRequest);
+    assertNotNull(refreshResponse);
+    assertEquals(AuthService.REFRESH_TOKEN_FAIL, refreshResponse.getString("response_code"));
+    assertEquals(AuthService.REFRESH_TOKEN_FAIL_MSG, refreshResponse.getString("message"));
+
   }
 
 

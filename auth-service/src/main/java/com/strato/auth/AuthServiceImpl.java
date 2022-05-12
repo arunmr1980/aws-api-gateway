@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService{
       long expiryDateTime = userDevice.getJsonNumber("refresh_token_expiry_datetime").longValue();
       if (!DateUtil.isExpired(expiryDateTime)){
         logger.info("Refreshing tokens ...");
-        Map<String, String> tokensMap = this.generateAndUpdateTokens(userDevice, userDevice);
+        Map<String, String> tokensMap = this.generateAndUpdateTokensForTokenRefresh(userDevice);
         String accessTokenNew = tokensMap.get("access_token") + "";
         String refreshTokenNew = tokensMap.get("refresh_token") + "";
         response = this.getResponse(AuthService.REFRESH_TOKEN_SUCCESS,
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService{
       logger.info("Password from DB " + passwordFromDB);
       if(CryptoUtils.checkPasswordMatch(loginRequest.getString("password"), passwordFromDB)){
         logger.info("Passwords matched ...");
-        Map<String, String> tokensMap = this.generateAndUpdateTokens(user, loginRequest);
+        Map<String, String> tokensMap = this.generateAndUpdateTokensForLogin(user, loginRequest);
         accessToken = tokensMap.get("access_token") + "";
         refreshToken = tokensMap.get("refresh_token") + "";
         deviceKey = tokensMap.get("device_key") + "";
@@ -98,30 +98,16 @@ public class AuthServiceImpl implements AuthService{
   }
 
 
-  private Map<String, String> generateAndUpdateTokens(JsonObject user, JsonObject loginRequest) throws Exception{
-    Map<String, String> tokensMap = new HashMap<String, String>();
-    String userAccountKey = user.getString("user_account_key");
-    String accessToken = JSONWebtokenUtil.getJWTToken(userAccountKey);
-    logger.info("JSON Token :- " + accessToken);
-    String refreshToken = StringUtil.getGeneratedToken();
-    logger.info("Refresh Token :- " + refreshToken);
-    String deviceKey = this.updateDeviceAndTokens(accessToken, refreshToken, userAccountKey, loginRequest);
-
-    tokensMap.put("access_token", accessToken);
-    tokensMap.put("refresh_token", refreshToken);
-    tokensMap.put("device_key", deviceKey);
-
-    return tokensMap;
+  private Map<String, String> generateAndUpdateTokensForTokenRefresh(JsonObject userDevice) throws Exception{
+    String userAccountKey = userDevice.getString("user_account_key");
+    String deviceKey = userDevice.getString("device_key");
+    String deviceName = null;// Device name is not updated in token refresh
+    return this.generateAndUpdateTokens(userAccountKey, deviceKey, deviceName);
   }
 
 
-  private String updateDeviceAndTokens(String accessToken, String refreshToken, String userAccountKey, JsonObject loginRequest) throws Exception{
-    long accessTokenExpiryDateTime = DateUtil.getNowInMilliSeconds() + ACCESS_TOKEN_EXPIRY_MS;
-    long refreshTokenExpiryDateTime = DateUtil.getNowInMilliSeconds() + REFRESH_TOKEN_EXPIRY_MS;
-
-    logger.info("Access token expiry - " + accessTokenExpiryDateTime);
-    logger.info("Refresh token expiry - " + refreshTokenExpiryDateTime);
-
+  private Map<String, String> generateAndUpdateTokensForLogin(JsonObject user, JsonObject loginRequest) throws Exception{
+    String userAccountKey = user.getString("user_account_key");
     String deviceKey = null;
     if(loginRequest.containsKey("device_key")){
       deviceKey = loginRequest.getString("device_key");
@@ -133,7 +119,36 @@ public class AuthServiceImpl implements AuthService{
     if(loginRequest.containsKey("device_name")){
       deviceName = loginRequest.getString("device_name");
     }
+    return this.generateAndUpdateTokens(userAccountKey, deviceKey, deviceName);
+  }
 
+
+  private Map<String, String> generateAndUpdateTokens(String userAccountKey, String deviceKey, String deviceName) throws Exception{
+    Map<String, String> tokensMap = new HashMap<String, String>();
+    String accessToken = JSONWebtokenUtil.getJWTToken(userAccountKey);
+    logger.info("JSON Token :- " + accessToken);
+    String refreshToken = StringUtil.getGeneratedToken();
+    logger.info("Refresh Token :- " + refreshToken);
+    this.updateDeviceAndTokens(accessToken, refreshToken, userAccountKey, deviceKey, deviceName);
+
+    tokensMap.put("access_token", accessToken);
+    tokensMap.put("refresh_token", refreshToken);
+    tokensMap.put("device_key", deviceKey);
+
+    return tokensMap;
+  }
+
+
+  private String updateDeviceAndTokens(String accessToken,
+                                       String refreshToken,
+                                       String userAccountKey,
+                                       String deviceKey,
+                                       String deviceName) throws Exception{
+    long accessTokenExpiryDateTime = DateUtil.getNowInMilliSeconds() + ACCESS_TOKEN_EXPIRY_MS;
+    long refreshTokenExpiryDateTime = DateUtil.getNowInMilliSeconds() + REFRESH_TOKEN_EXPIRY_MS;
+
+    logger.info("Access token expiry - " + accessTokenExpiryDateTime);
+    logger.info("Refresh token expiry - " + refreshTokenExpiryDateTime);
     logger.info("Device [" + deviceKey + "] " + deviceName);
 
     this.authServiceDao.updateAuthTokens( userAccountKey,

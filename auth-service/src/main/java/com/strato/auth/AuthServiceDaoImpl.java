@@ -37,7 +37,7 @@ class AuthServiceDaoImpl implements AuthServiceDao{
 
   public JsonObject getUserDevice(String accessToken, String refreshToken) throws Exception{
     JsonObject device = null;
-    String query = "Select user_account_key, refresh_token_expiry_datetime from "+ AUTH_DB + "." + TBL_USER_DEVICE + " Where "+
+    String query = "Select user_account_key, device_key, refresh_token_expiry_datetime from "+ AUTH_DB + "." + TBL_USER_DEVICE + " Where "+
                    "access_token=? And refresh_token=?";
     PreparedStatement stmt = this.connection.prepareStatement(query);
     stmt.setString(1,accessToken);
@@ -45,6 +45,7 @@ class AuthServiceDaoImpl implements AuthServiceDao{
     ResultSet results = stmt.executeQuery();
     if(results.next()){
       device = Json.createObjectBuilder().add("user_account_key",results.getString("user_account_key"))
+                                       .add("device_key",results.getString("device_key"))
                                        .add("refresh_token_expiry_datetime", results.getLong("refresh_token_expiry_datetime"))
                                        .build();
     }
