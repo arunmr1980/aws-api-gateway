@@ -1,7 +1,7 @@
 {
   "body": "{\"email\":\"testemail@abc.in\",\"mobile\":\"6783456729\",\"username\":\"lambda-101\",\"firstname\":\"Jason\",\"lastname\":\"Job\",\"password\":\"abc123\"}",
   "resource": "/{proxy+}",
-  "path": "/path/to/resource",
+  "path": "/user",
   "httpMethod": "POST",
   "isBase64Encoded": true,
   "queryStringParameters": {
