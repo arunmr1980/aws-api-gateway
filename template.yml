@@ -27,7 +27,12 @@ Resources:
         Login:
           Type: Api
           Properties:
-            Path: /user/login
+            Path: /auth/login
+            Method: POST
+        RefreshToken:
+          Type: Api
+          Properties:
+            Path: /auth/token
             Method: POST
 
 
