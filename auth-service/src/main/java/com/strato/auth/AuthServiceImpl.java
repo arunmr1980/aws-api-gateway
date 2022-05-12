@@ -170,6 +170,7 @@ public class AuthServiceImpl implements AuthService{
               .add("message", message);
     if(accessToken != null){
       objBuilder.add("access_token", accessToken);
+      objBuilder.add("expires", AuthService.ACCESS_TOKEN_EXPIRY_MS);
     }
     if(refreshToken != null){
       objBuilder.add("refresh_token", refreshToken);

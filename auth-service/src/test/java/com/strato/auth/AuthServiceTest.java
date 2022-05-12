@@ -65,6 +65,7 @@ class AuthServiceTest {
     logger.info("Access Token refreshed - " + accessTokenNew);
     assertNotEquals(accessToken, accessTokenNew);
     assertNotEquals(refreshToken, refreshTokenNew);
+    assertEquals(refreshResponse.getJsonNumber("expires").longValue(), AuthService.ACCESS_TOKEN_EXPIRY_MS);
 
     //## Trying to refresh old token
     refreshResponse = authService.refreshToken(refreshRequest);
@@ -118,6 +119,8 @@ class AuthServiceTest {
     assertNotNull(loginResponse.getString("access_token"));
     assertNotNull(loginResponse.getString("refresh_token"));
     assertNotNull(loginResponse.getString("device_key"));
+    assertEquals(loginResponse.getJsonNumber("expires").longValue(), AuthService.ACCESS_TOKEN_EXPIRY_MS);
+
 
   }
 
