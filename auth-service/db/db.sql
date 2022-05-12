@@ -1,5 +1,5 @@
 
-create table rs_user (
+create table user (
   id int unsigned auto_increment primary key,
   user_account_key varchar(255) not null unique,
   email varchar(255) not null,
@@ -9,7 +9,7 @@ create table rs_user (
   lastname varchar(255),
   password varchar(1023) not null);
 
-  create table rs_user_device (
+  create table user_device (
     user_account_key varchar(255) not null,
     device_key varchar(255) not null unique,
     device_name varchar(255) not null,
@@ -19,4 +19,4 @@ create table rs_user (
     refresh_token_expiry_datetime bigint unsigned
   );
 
-  alter table rs_user_device add constraint PK_Device primary key(user_account_key, device_key);
+  alter table user_device add constraint PK_Device primary key(user_account_key, device_key);
