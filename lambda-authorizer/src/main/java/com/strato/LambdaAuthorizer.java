@@ -7,7 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.strato.util.JSONWebtokenUtil;
-
+import com.strato.auth.AuthService;
+import com.strato.auth.AuthServiceImpl;
 
 public class LambdaAuthorizer implements RequestHandler<TokenAuthorizerContext, AuthPolicy> {
 
@@ -41,11 +42,24 @@ public class LambdaAuthorizer implements RequestHandler<TokenAuthorizerContext, 
 
     try{
       if(! JSONWebtokenUtil.validateToken(token)){
-        logger.info("Token is not valid");
+        logger.info("Token is not valid or expired");
         return this.getDenyAllPolicy(principalId, region, awsAccountId, restApiId, stage);
       }
     }catch(Exception ex){
       logger.info("Exception while validating token");
+      logger.error(ex);
+      return this.getDenyAllPolicy(principalId, region, awsAccountId, restApiId, stage);
+    }
+
+    // Check if the token is active in DB
+    AuthService authService = new AuthServiceImpl();
+    try{
+      if(!authService.isTokenActive(token)){
+        logger.info("Token is not available in DB");
+        return this.getDenyAllPolicy(principalId, region, awsAccountId, restApiId, stage);
+      }
+    }catch(Exception ex){
+      logger.info("Exception while checking token with DB");
       logger.error(ex);
       return this.getDenyAllPolicy(principalId, region, awsAccountId, restApiId, stage);
     }
