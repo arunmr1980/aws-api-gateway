@@ -53,6 +53,10 @@ public class Handler implements RequestHandler<APIGatewayV2ProxyRequestEvent, AP
           JsonObject refreshTokenResponse = authService.refreshToken(Util.getBodyAsJsonObject(event, gson));
           response = this.getResponse(refreshTokenResponse);
           break;
+        case "/AUTH/LOGOUT":
+          JsonObject logoutResponse = authService.logout(Util.getBodyAsJsonObject(event, gson));
+          response = this.getResponse(logoutResponse);
+          break;
       }
     }catch(Exception ex){
       logger.log("Exception in Handler ");

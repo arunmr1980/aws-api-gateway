@@ -22,7 +22,7 @@ public class JSONWebtokenUtil{
     Random r = new Random();
     // random number added to avoid identical tokens being created when generated
     // below 1000 ms gap
-    long randomNum = r.nextInt(10000);
+    long randomNum = r.nextInt(100000);
     long expiryDateInMs = now.getTime() + jwtExpirationInMs + randomNum;
     Date expiryDate = new Date(expiryDateInMs);
 
